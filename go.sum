@@ -9,6 +9,8 @@ github.com/rohanthewiz/rxrouter v0.0.0-20190115025035-cc2461fb4de3 h1:VGP8BQ8KFf
 github.com/rohanthewiz/rxrouter v0.0.0-20190115025035-cc2461fb4de3/go.mod h1:nPBUE865HXKxGkR5vgEjZukCc0ZdRXqLvHHtnXo5gqE=
 github.com/rohanthewiz/rxrouter v0.0.0-20190115031859-4e29fc198348 h1:MOeKV2+SJR+M1DqrYbSNfwOma6T7TJEyr6ApaNEK02A=
 github.com/rohanthewiz/rxrouter v0.0.0-20190115031859-4e29fc198348/go.mod h1:nPBUE865HXKxGkR5vgEjZukCc0ZdRXqLvHHtnXo5gqE=
+github.com/rohanthewiz/rxrouter v0.0.0-20190115033435-fba7836f88a8 h1:ayUibAi99Oge1KG56jcMNEtDLMkDZgtSZMfjP0xu3YQ=
+github.com/rohanthewiz/rxrouter v0.0.0-20190115033435-fba7836f88a8/go.mod h1:nPBUE865HXKxGkR5vgEjZukCc0ZdRXqLvHHtnXo5gqE=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.1.0 h1:3BohG7mqwj4lq7PTX//7gLbUlzNvZSPmuHFnloXT0lw=
