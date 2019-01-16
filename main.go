@@ -3,46 +3,45 @@ package main
 import (
 	"fmt"
 	"github.com/rohanthewiz/rxrouter"
-	"github.com/rohanthewiz/rxrouter/mux"
 	"github.com/valyala/fasthttp"
 	"log"
 )
 
-const appEnv = "[DEV]"
-const authed = true
-
 func main() {
-	rx := rxrouter.New()
+	rx := rxrouter.New(rxrouter.Options{Verbose: true}) // the argument here is optional
 
-	// Rudimentary request logging middleware
-	rx.Use(func(ctx *fasthttp.RequestCtx) (retCtx *fasthttp.RequestCtx, ok bool) {
+	// Logging middleware
+	rx.Use(func(ctx *fasthttp.RequestCtx) (ok bool) {
 		log.Printf("Requested path: %s", ctx.Path())
-		return ctx, true
+		return true
 	}, fasthttp.StatusServiceUnavailable) // 503
 
 	// Auth middleware
-	rx.Use(func(ctx *fasthttp.RequestCtx) (retCtx *fasthttp.RequestCtx, ok bool) {
-		if !authed { return ctx, false }
-		return ctx, true
+	rx.Use(func(ctx *fasthttp.RequestCtx) (ok bool) {
+		const authed = true // pretend we got a good response from our auth check
+		if !authed {
+			return false
+		}
+		return true
 	}, fasthttp.StatusUnauthorized)
 
-	// Prepend to output middleware
-	rx.Use(func(ctx *fasthttp.RequestCtx) (retCtx *fasthttp.RequestCtx, ok bool) {
-		_, _ = fmt.Fprintf(ctx, "%s ", appEnv)
-		return ctx, true
-	}, fasthttp.StatusNotImplemented)
-
-
 	// Add some routes
-	rx.Mux.Add("/", func (ctx *fasthttp.RequestCtx, mx *mux.Mux) {
+	rx.Add("/", func(ctx *fasthttp.RequestCtx, params map[string]string) {
 		_, _ = fmt.Fprintf(ctx, "Hello, world! Requested path is %q", ctx.Path())
 	})
-	rx.Mux.Add("/abc", handleABC)
 
+	rx.Add("/hello/:name", handleHello)
+
+	rx.Add("/images/:name/:height", handleImages)
 
 	// Let it rip!
 	rx.Start("3020")
 }
-func handleABC(ctx *fasthttp.RequestCtx, mx *mux.Mux) {
-	_, _ = fmt.Fprintf(ctx, "Hello ABC! Requested path is %q", ctx.Path())
+
+func handleHello(ctx *fasthttp.RequestCtx, params map[string]string) {
+	_, _ = ctx.WriteString(fmt.Sprintf("Hello %s", params["name"]))
+}
+
+func handleImages(ctx *fasthttp.RequestCtx, params map[string]string) {
+	_, _ = fmt.Fprintf(ctx, "Image: %s  height: %s", params["name"], params["height"])
 }
