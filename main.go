@@ -8,7 +8,17 @@ import (
 )
 
 func main() {
-	rx := rxrouter.New(rxrouter.Options{Verbose: true}) // the argument here is optional
+	rx := rxrouter.New(rxrouter.Options{
+		Verbose: true,
+		// Setup route for static files
+		AssetPaths: []rxrouter.AssetPath{ //=> try http://localhost:3020/files/tiger.jpg
+		{
+			Prefix: []byte("/files/"), // example -> localhost:3020/files/dove.jpg
+			FileSystemRoot: "./assets/images", // Filesystem root for files
+			StripSlashes: 1, // remove n tokens from the prefix when appending file url to filesystem root
+		},
+	},
+	}) // the argument here is optional
 
 	// Logging middleware
 	rx.Use(func(ctx *fasthttp.RequestCtx) (ok bool) {
