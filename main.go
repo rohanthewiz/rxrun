@@ -8,50 +8,49 @@ import (
 )
 
 func main() {
-	rx := rxrouter.New(rxrouter.Options{
-		Verbose: true,
-		// Setup route for static files
-		AssetPaths: []rxrouter.AssetPath{ //=> try http://localhost:3020/files/tiger.jpg
-		{
-			Prefix: []byte("/files/"), // example -> localhost:3020/files/dove.jpg
-			FileSystemRoot: "./assets/images", // Filesystem root for files
-			StripSlashes: 1, // remove n tokens from the prefix when appending file url to filesystem root
-		},
-	},
-	}) // the argument here is optional
+	rx := rxrouter.New(
+		rxrouter.Options{Verbose: true, Port: "3026"}, // the Options argument here is optional
+	)
 
 	// Logging middleware
-	rx.Use(func(ctx *fasthttp.RequestCtx) (ok bool) {
-		log.Printf("Requested path: %s", ctx.Path())
-		return true
-	}, fasthttp.StatusServiceUnavailable) // 503
+	rx.Use(
+		func(ctx *fasthttp.RequestCtx) (ok bool) {
+			log.Printf("Requested path: %s", ctx.Path())
+			return true
+		},
+		fasthttp.StatusServiceUnavailable, // 503
+	)
 
 	// Auth middleware
-	rx.Use(func(ctx *fasthttp.RequestCtx) (ok bool) {
-		const authed = true // pretend we got a good response from our auth check
-		if !authed {
-			return false
-		}
-		return true
-	}, fasthttp.StatusUnauthorized)
+	rx.Use(
+		func(ctx *fasthttp.RequestCtx) (ok bool) {
+			authed := true // pretend we got a good response from our auth check
+			if !authed {
+				return false
+			}
+			return true
+		},
+		fasthttp.StatusUnauthorized,
+	)
 
 	// Add some routes
-	rx.Add("/", func(ctx *fasthttp.RequestCtx, params map[string]string) {
-		_, _ = fmt.Fprintf(ctx, "Hello, world! Requested path is %q", ctx.Path())
+	rx.AddRoute("/", func(ctx *fasthttp.RequestCtx, params map[string]string) {
+		fmt.Fprintf(ctx, "Hello, world! Requested path is %q", ctx.Path())
 	})
-
-	rx.Add("/hello/:name", handleHello)
-
-	rx.Add("/images/:name/:height", handleImages)
+	rx.AddRoute("/hello/:name/:age", handleHello)
+	rx.AddRoute("/store/:number/:location", handleStore)
+	// Routes for static files
+	rx.AddStaticFilesRoute("/images/", "./assets/images", 1)
+	rx.AddStaticFilesRoute("/css/", "./assets/css", 1)
 
 	// Let it rip!
-	rx.Start("3020")
+	rx.Start()
 }
 
 func handleHello(ctx *fasthttp.RequestCtx, params map[string]string) {
-	_, _ = ctx.WriteString(fmt.Sprintf("Hello %s", params["name"]))
+	ctx.WriteString(fmt.Sprintf("Hello %s", params["name"]))
 }
 
-func handleImages(ctx *fasthttp.RequestCtx, params map[string]string) {
-	_, _ = fmt.Fprintf(ctx, "Image: %s  height: %s", params["name"], params["height"])
+func handleStore(ctx *fasthttp.RequestCtx, params map[string]string) {
+	fmt.Fprintf(ctx, "Store: %s  location: %s", params["number"], params["location"])
 }

@@ -29,6 +29,14 @@ github.com/rohanthewiz/rxrouter v0.0.0-20190118055710-44c5ae6acac1 h1:dB2S19NS11
 github.com/rohanthewiz/rxrouter v0.0.0-20190118055710-44c5ae6acac1/go.mod h1:nPBUE865HXKxGkR5vgEjZukCc0ZdRXqLvHHtnXo5gqE=
 github.com/rohanthewiz/rxrouter v0.0.0-20190118065244-db765b3ed2a2 h1:2QZ5O6No9b5VlNSCTrsQSBuSH8X4LEKW/n4wSi6QXBA=
 github.com/rohanthewiz/rxrouter v0.0.0-20190118065244-db765b3ed2a2/go.mod h1:nPBUE865HXKxGkR5vgEjZukCc0ZdRXqLvHHtnXo5gqE=
+github.com/rohanthewiz/rxrouter v0.0.0-20190120033120-a82d44694614 h1:Eh/6daYSiZBHuu4Zsi2e6IPloxVNcJxbMDK9yLy5EdA=
+github.com/rohanthewiz/rxrouter v0.0.0-20190120033120-a82d44694614/go.mod h1:nPBUE865HXKxGkR5vgEjZukCc0ZdRXqLvHHtnXo5gqE=
+github.com/rohanthewiz/rxrouter v0.0.0-20190120040532-7d877f2b00db h1:gBcapV3NI7HCuzR4GQ60O1eXsjDSEPzJxqurPmApiQw=
+github.com/rohanthewiz/rxrouter v0.0.0-20190120040532-7d877f2b00db/go.mod h1:nPBUE865HXKxGkR5vgEjZukCc0ZdRXqLvHHtnXo5gqE=
+github.com/rohanthewiz/rxrouter v0.0.0-20190120042106-02c6814f2573 h1:MuZ1vSACfZx9GEV7Yyf1fj48meEhmFf8hABgvEw4J8k=
+github.com/rohanthewiz/rxrouter v0.0.0-20190120042106-02c6814f2573/go.mod h1:nPBUE865HXKxGkR5vgEjZukCc0ZdRXqLvHHtnXo5gqE=
+github.com/rohanthewiz/rxrouter v0.0.0-20190120052508-ae3514738589 h1:A3D34ch6fwq3AxT9yIBsL2nsubiRHLTC+eMr7qBUqJo=
+github.com/rohanthewiz/rxrouter v0.0.0-20190120052508-ae3514738589/go.mod h1:nPBUE865HXKxGkR5vgEjZukCc0ZdRXqLvHHtnXo5gqE=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.1.0 h1:3BohG7mqwj4lq7PTX//7gLbUlzNvZSPmuHFnloXT0lw=
