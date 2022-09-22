@@ -2,12 +2,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/rohanthewiz/element"
-	"github.com/rohanthewiz/rxrouter"
-	"github.com/valyala/fasthttp"
 	"log"
+	"net/http/httptest"
 	"os"
 	"strings"
+
+	"github.com/rohanthewiz/element"
+	"github.com/rohanthewiz/rerr"
+	"github.com/rohanthewiz/rxrouter"
+	"github.com/rohanthewiz/rxrouter/core/constants"
+	"github.com/valyala/fasthttp"
 )
 
 func main() {
@@ -19,15 +23,17 @@ func main() {
 			KeyFile:  "/etc/letsencrypt/live/mysite.com/privkey.pem",
 		},
 	})
+
 	// Env port override
 	prt := os.Getenv("RX_PORT")
 	if prt != "" {
 		rx.Options.Port = prt
 	}
+
 	tls := strings.ToLower(os.Getenv("RX_USE_TLS"))
 	if tls != "" && tls != "false" && tls != "no" {
 		rx.Options.TLS.UseTLS = true
-		go startHttpToHTTPSRedirector()
+		// go startHttpToHTTPSRedirector()
 	}
 
 	// Logging middleware
@@ -54,15 +60,30 @@ func main() {
 	// Add some routes
 	rx.AddRoute("/", handleRoot)
 	rx.AddRoute("/hello/:name/:age", func(ctx *fasthttp.RequestCtx, params map[string]string) {
-		ctx.WriteString(fmt.Sprintf("Hello %s. You are %s!", params["name"], params["age"]))
+		ctx.SetContentType("text/html; charset=utf-8")
+		_, _ = ctx.WriteString(fmt.Sprintf("Hello %s. You are %s!", params["name"], params["age"]))
 	})
-	// Routes for static files
+	// Add routes for static files
 	rx.AddStaticFilesRoute("/images/", "./assets/images", 1)
 	rx.AddStaticFilesRoute("/css/", "./assets/css", 1)
 	rx.AddStaticFilesRoute("/.well-known/acme-challenge/", "./certs", 0)
 
-	// Let it rip!
-	rx.Start()
+	if ev := os.Getenv("APP_TEST"); ev != "" { // provide your own logic
+		// Prepare and run a test
+		req := httptest.NewRequest("GET", "/hello/mike/45", nil)
+		req.Header.Add(constants.HeaderContentType, constants.ContentTypeText)
+		resp, err := rxrouter.RunServerTest(rx, req)
+		if err != nil {
+			log.Println("error", rerr.Wrap(err))
+		}
+
+		fmt.Println(strings.Repeat("-", 20), "SERVER TEST", strings.Repeat("-", 20))
+		fmt.Println(string(resp))
+		fmt.Println(strings.Repeat("-", 54))
+	} else {
+		// Run the Server
+		rx.Start()
+	}
 }
 
 func handleRoot(ctx *fasthttp.RequestCtx, params map[string]string) {
@@ -73,19 +94,20 @@ func handleRoot(ctx *fasthttp.RequestCtx, params map[string]string) {
 				e("title").R("Under Maintenance"),
 			),
 			e("body").R(
-				e("div", "class", "main-content").R(
-					e("h2").R("This site is currently under maintenance. Please check back later, and thanks for your patience"),
+				e("div", "class", "main-content", "style", "color:#501025").R(
+					e("h2").R("This site is currently under maintenance."),
+					e("h3").R(" Please check back later, and thanks for your patience"),
 				),
 			),
 		)
 	ctx.SetContentType("text/html; charset=utf-8")
-	ctx.WriteString(htm)
+	_, _ = ctx.WriteString(htm)
 }
 
 // Use a simple router instance to redirect traffic from standard to TLS port
 // Typically this is 80 -> 443
 func startHttpToHTTPSRedirector() {
-	fx := rxrouter.New(rxrouter.Options{
+	rx := rxrouter.New(rxrouter.Options{
 		Verbose: true,
 		Port:    "80",
 		TLS: rxrouter.RxTLS{
@@ -93,9 +115,10 @@ func startHttpToHTTPSRedirector() {
 		},
 	})
 
-	fx.AddCustomMasterHandler(func(ctx *fasthttp.RequestCtx) {
+	var customHdlr fasthttp.RequestHandler = func(ctx *fasthttp.RequestCtx) {
 		ctx.Redirect("https://mysite.com", fasthttp.StatusTemporaryRedirect)
-	})
+	}
 
-	fx.Start()
+	rx.CustomMasterHandler(&customHdlr)
+	rx.Start()
 }
