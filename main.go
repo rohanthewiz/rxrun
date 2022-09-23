@@ -80,6 +80,19 @@ func main() {
 		fmt.Println(strings.Repeat("-", 20), "SERVER TEST", strings.Repeat("-", 20))
 		fmt.Println(string(resp))
 		fmt.Println(strings.Repeat("-", 54))
+
+		// Prepare and run static route test
+		req = httptest.NewRequest("GET", "/css/sample.css", nil)
+		req.Header.Add(constants.HeaderContentType, constants.ContentTypeText)
+		resp, err = rxrouter.RunServerTest(rx, req)
+		if err != nil {
+			log.Println("error", rerr.Wrap(err))
+		}
+
+		fmt.Println(strings.Repeat("-", 20), "SERVER TEST", strings.Repeat("-", 20))
+		fmt.Println(string(resp))
+		fmt.Println(strings.Repeat("-", 54))
+
 	} else {
 		// Run the Server
 		rx.Start()
@@ -93,10 +106,12 @@ func handleRoot(ctx *fasthttp.RequestCtx, params map[string]string) {
 			e("head").R(
 				e("title").R("Under Maintenance"),
 			),
-			e("body").R(
-				e("div", "class", "main-content", "style", "color:#501025").R(
-					e("h2").R("This site is currently under maintenance."),
+			e("body", "style", "background-color:#F2EEDB").R(
+				e("div", "class", "main-content").R(
+					e("h2", "style", "color:#940b38").R("This site is currently under maintenance."),
 					e("h3").R(" Please check back later, and thanks for your patience"),
+					e("img", "src", "/images/tiger.jpg", "style", "width:360px; float:right").R(),
+					e("p").R(strings.Repeat("Lorem ipsum and other text fillers", 20)),
 				),
 			),
 		)
